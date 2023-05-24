@@ -49,17 +49,16 @@ public class Chamado implements Serializable {
 		super();
 	}
 
-	public Chamado(Long id, LocalDate dtFechamento, Prioridade prioridade, Status status, String titulo,
-			String observacoes, Cliente cliente, Tecnico tecnico) {
+	public Chamado(Long id, Prioridade prioridade, Status status, String titulo,
+			String observacoes, Tecnico tecnico, Cliente cliente) {
 		super();
 		this.id = id;
-		this.dtFechamento = dtFechamento;
 		this.prioridade = prioridade;
 		this.status = status;
 		this.titulo = titulo;
 		this.observacoes = observacoes;
-		this.cliente = cliente;
 		this.tecnico = tecnico;
+		this.cliente = cliente;
 	}
 
 	public Long getId() {
