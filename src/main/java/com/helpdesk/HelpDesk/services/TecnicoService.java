@@ -48,6 +48,11 @@ public class TecnicoService {
 		obj = new Tecnico(objDTO);
 		return repository.save(obj);
 	}
+	
+	public void delete(Long id) {
+		findById(id);		
+		repository.deleteById(id);
+	}
 
 	private void validaCpfEEmail(TecnicoDTO objDTO) {
 		Optional<Pessoa> obj = pessoaRepository.findByCpf(objDTO.getCpf());
