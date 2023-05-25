@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.helpdesk.HelpDesk.domains.Tecnico;
+import com.helpdesk.HelpDesk.domains.dtos.TecnicoDTO;
 import com.helpdesk.HelpDesk.repositories.TecnicoRepository;
 import com.helpdesk.HelpDesk.services.exceptions.ObjectNotFoudException;
 
@@ -23,6 +24,12 @@ public class TecnicoService {
 	
 	public List<Tecnico> findAll(){
 		return repository.findAll();
+	}
+
+	public Tecnico created(TecnicoDTO objDTO) {
+		objDTO.setId(null);
+		Tecnico obj = new Tecnico(objDTO);
+		return repository.save(obj);
 	}
 
 }

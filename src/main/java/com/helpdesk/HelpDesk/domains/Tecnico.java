@@ -2,8 +2,10 @@ package com.helpdesk.HelpDesk.domains;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.helpdesk.HelpDesk.domains.dtos.TecnicoDTO;
 import com.helpdesk.HelpDesk.domains.enums.Perfil;
 
 import jakarta.persistence.Entity;
@@ -24,6 +26,18 @@ public class Tecnico extends Pessoa {
 
 	public Tecnico(Long id, String nome, String cpf, String email, String password) {
 		super(id, nome, cpf, email, password);
+		addPerfil(Perfil.TECNICO);
+	}
+	
+	public Tecnico(TecnicoDTO obj) {
+		super();
+		id = obj.getId();
+		nome = obj.getNome();
+		cpf = obj.getCpf();
+		email = obj.getEmail();
+		password = obj.getPassword();
+		perfis = obj.getPerfis().stream().map(x -> x.getCodigo()).collect(Collectors.toSet());
+		dtCadastro = obj.getDtCadastro();
 		addPerfil(Perfil.TECNICO);
 	}
 
