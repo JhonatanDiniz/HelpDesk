@@ -6,9 +6,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.helpdesk.HelpDesk.domains.Pessoa;
 import com.helpdesk.HelpDesk.domains.Tecnico;
 import com.helpdesk.HelpDesk.domains.dtos.TecnicoDTO;
+import com.helpdesk.HelpDesk.repositories.PessoaRepository;
 import com.helpdesk.HelpDesk.repositories.TecnicoRepository;
+import com.helpdesk.HelpDesk.services.exceptions.DataIntegrityViolationException;
 import com.helpdesk.HelpDesk.services.exceptions.ObjectNotFoudException;
 
 @Service
@@ -16,6 +19,9 @@ public class TecnicoService {
 
 	@Autowired
 	private TecnicoRepository repository;
+	
+	@Autowired
+	private PessoaRepository pessoaRepository;
 
 	public Tecnico findById(Long id) {
 		Optional<Tecnico> obj = repository.findById(id);
@@ -28,8 +34,21 @@ public class TecnicoService {
 
 	public Tecnico created(TecnicoDTO objDTO) {
 		objDTO.setId(null);
+		validaCpfEEmail(objDTO);
 		Tecnico obj = new Tecnico(objDTO);
 		return repository.save(obj);
+	}
+
+	private void validaCpfEEmail(TecnicoDTO objDTO) {
+		Optional<Pessoa> obj = pessoaRepository.findByCpf(objDTO.getCpf());
+		if(obj.isPresent() && obj.get().getId() != objDTO.getId()) {
+			throw new DataIntegrityViolationException("CPF já cadastrado!");
+		}
+		
+		obj = pessoaRepository.findByEmail(objDTO.getEmail());
+		if(obj.isPresent() && obj.get().getId() != objDTO.getId()) {
+			throw new DataIntegrityViolationException("E-mail já cadastrado!");
+		}
 	}
 
 }
