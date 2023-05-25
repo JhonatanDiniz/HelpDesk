@@ -14,12 +14,14 @@ import com.helpdesk.HelpDesk.repositories.TecnicoRepository;
 import com.helpdesk.HelpDesk.services.exceptions.DataIntegrityViolationException;
 import com.helpdesk.HelpDesk.services.exceptions.ObjectNotFoudException;
 
+import jakarta.validation.Valid;
+
 @Service
 public class TecnicoService {
 
 	@Autowired
 	private TecnicoRepository repository;
-	
+
 	@Autowired
 	private PessoaRepository pessoaRepository;
 
@@ -27,8 +29,8 @@ public class TecnicoService {
 		Optional<Tecnico> obj = repository.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoudException("Objeto não encontrado! id: " + id));
 	}
-	
-	public List<Tecnico> findAll(){
+
+	public List<Tecnico> findAll() {
 		return repository.findAll();
 	}
 
@@ -39,14 +41,22 @@ public class TecnicoService {
 		return repository.save(obj);
 	}
 
+	public Tecnico update(Long id, @Valid TecnicoDTO objDTO) {
+		objDTO.setId(id);
+		Tecnico obj = findById(id);
+		validaCpfEEmail(objDTO);
+		obj = new Tecnico(objDTO);
+		return repository.save(obj);
+	}
+
 	private void validaCpfEEmail(TecnicoDTO objDTO) {
 		Optional<Pessoa> obj = pessoaRepository.findByCpf(objDTO.getCpf());
-		if(obj.isPresent() && obj.get().getId() != objDTO.getId()) {
+		if (obj.isPresent() && obj.get().getId() != objDTO.getId()) {
 			throw new DataIntegrityViolationException("CPF já cadastrado!");
 		}
-		
+
 		obj = pessoaRepository.findByEmail(objDTO.getEmail());
-		if(obj.isPresent() && obj.get().getId() != objDTO.getId()) {
+		if (obj.isPresent() && obj.get().getId() != objDTO.getId()) {
 			throw new DataIntegrityViolationException("E-mail já cadastrado!");
 		}
 	}
