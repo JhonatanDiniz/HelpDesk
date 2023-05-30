@@ -48,9 +48,14 @@ public class TecnicoService {
 		obj = new Tecnico(objDTO);
 		return repository.save(obj);
 	}
-	
+
 	public void delete(Long id) {
-		findById(id);		
+		Tecnico obj = findById(id);
+
+		if (obj.getChamados().size() > 0) {
+			throw new DataIntegrityViolationException("O Técnico possui chamados cadastrado!");
+		}
+
 		repository.deleteById(id);
 	}
 

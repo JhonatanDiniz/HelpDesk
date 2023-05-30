@@ -38,7 +38,7 @@ public class ClienteService {
 		Cliente obj = new Cliente(objDTO);
 		return repository.save(obj);
 	}
-	
+
 	public Cliente update(Long id, ClienteDTO objDTO) {
 		objDTO.setId(id);
 		Cliente obj = findById(id);
@@ -46,9 +46,14 @@ public class ClienteService {
 		obj = new Cliente(objDTO);
 		return repository.save(obj);
 	}
-	
+
 	public void delete(Long id) {
-		findById(id);
+		Cliente obj = findById(id);
+
+		if (obj.getChamados().size() > 0) {
+			throw new DataIntegrityViolationException("Cliente possui chamados cadastrado!");
+		}
+
 		repository.deleteById(id);
 	}
 
