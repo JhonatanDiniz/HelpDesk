@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.helpdesk.HelpDesk.domains.Cliente;
@@ -19,10 +20,14 @@ import com.helpdesk.HelpDesk.services.exceptions.ObjectNotFoudException;
 public class ClienteService {
 
 	@Autowired
-	ClienteRepository repository;
+	private ClienteRepository repository;
 
 	@Autowired
-	PessoaRepository pessoaRepository;
+	private PessoaRepository pessoaRepository;
+	
+	@Autowired 
+	private BCryptPasswordEncoder encoder;
+	
 
 	public Cliente findById(Long id) {
 		Optional<Cliente> obj = repository.findById(id);
@@ -35,6 +40,7 @@ public class ClienteService {
 
 	public Cliente created(ClienteDTO objDTO) {
 		objDTO.setId(null);
+		objDTO.setPassword(encoder.encode(objDTO.getPassword()));
 		validaCpfEEmail(objDTO);
 		Cliente obj = new Cliente(objDTO);
 		return repository.save(obj);
